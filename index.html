@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#062b5c">
+<style id="dojoThemeOverrides">:root{--dojo-primary:#062b5c;--dojo-text:#152238}h1{color:var(--dojo-primary)}.confirm,.dot.on,.upload{background:var(--dojo-primary);border-color:var(--dojo-primary)}.student-name{color:var(--dojo-primary)}body{color:var(--dojo-text)}</style>
+
+<title>용인대 승리태권도 출석체크</title>
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+body{
+  margin:0;
+  font-family:Arial,"Noto Sans KR",sans-serif;
+  background:#f4f7fb;
+  color:#152238;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.wrap{
+  width:100%;
+  max-width:520px;
+  padding:30px 24px;
+  text-align:center;
+}
+
+.brand{
+  font-size:17px;
+  font-weight:700;
+  color:#315274;
+  margin-bottom:8px;
+}
+
+h1{
+  margin:0;
+  font-size:34px;
+  color:#062b5c;
+  letter-spacing:-1px;
+}
+
+.guide{
+  margin-top:14px;
+  margin-bottom:28px;
+  color:#6d7b8c;
+  font-size:17px;
+}
+
+.pin-box{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  margin-bottom:28px;
+}
+
+.dot{
+  width:22px;
+  height:22px;
+  border:2px solid #b9c5d2;
+  border-radius:50%;
+  background:white;
+}
+
+.dot.on{
+  background:#0b5bd3;
+  border-color:#0b5bd3;
+}
+
+.keypad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  max-width:400px;
+  margin:0 auto;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.key{
+  height:82px;
+  border-radius:18px;
+  background:white;
+  border:1px solid #dce3ec;
+  font-size:30px;
+  font-weight:700;
+  color:#17283d;
+  box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+.key:active{transform:scale(.97)}
+
+.delete{
+  color:#63758a;
+  font-size:24px;
+}
+
+.confirm{
+  background:#0b5bd3;
+  color:white;
+  font-size:20px;
+}
+
+.confirm:disabled{opacity:.45}
+
+.message{
+  min-height:34px;
+  margin-top:24px;
+  font-size:18px;
+  font-weight:700;
+}
+
+.error{color:#e04444}
+
+.success-card{
+  display:none;
+  background:white;
+  border-radius:24px;
+  padding:30px 25px;
+  box-shadow:0 10px 35px rgba(0,0,0,.08);
+}
+
+.check{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  background:#08a64d;
+  color:white;
+  margin:0 auto 15px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:40px;
+}
+
+.student-name{
+  font-size:30px;
+  font-weight:800;
+  color:#062b5c;
+}
+
+.complete-text{
+  margin-top:8px;
+  font-size:22px;
+  color:#079447;
+  font-weight:800;
+}
+
+.time{
+  margin-top:10px;
+  color:#738093;
+  font-size:17px;
+}
+
+/* 사진 */
+
+.photo-area{
+  margin-top:25px;
+  border-top:1px solid #e5e9ef;
+  padding-top:22px;
+}
+
+.photo-guide{
+  color:#66768a;
+  margin-bottom:13px;
+  font-size:15px;
+}
+
+.photo-button{
+  width:100%;
+  min-height:58px;
+  border-radius:15px;
+  background:#17283d;
+  color:white;
+  font-size:18px;
+  font-weight:800;
+}
+
+.skip-button{
+  width:100%;
+  min-height:48px;
+  margin-top:8px;
+  background:transparent;
+  color:#788697;
+  font-size:15px;
+}
+
+#photoInput{
+  display:none;
+}
+
+.preview{
+  display:none;
+  width:100%;
+  max-height:330px;
+  object-fit:cover;
+  border-radius:15px;
+  margin-top:15px;
+}
+
+.photo-actions{
+  display:none;
+  gap:8px;
+  margin-top:10px;
+}
+
+.photo-actions button{
+  flex:1;
+  min-height:52px;
+  border-radius:13px;
+  font-size:16px;
+  font-weight:800;
+}
+
+.retake{
+  background:#e9edf3;
+  color:#24364a;
+}
+
+.upload{
+  background:#0b5bd3;
+  color:white;
+}
+
+.upload:disabled{opacity:.5}
+
+#photoMessage{
+  margin-top:12px;
+  font-weight:700;
+  line-height:1.5;
+}
+
+
+.last-photo{display:none;max-width:230px;margin:0 auto 16px;padding:9px;background:#fff;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,.1)}
+.last-photo img{width:100%;height:155px;object-fit:cover;border-radius:10px}
+.last-photo-caption{font-size:13px;color:#506178;margin-top:6px;font-weight:700}
+.camera-modal{display:none;position:fixed;inset:0;z-index:9999;background:#000;flex-direction:column}
+.camera-video-wrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000}
+#cameraVideo{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.camera-controls{flex:0 0 auto;background:#111;padding:18px 20px calc(18px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:14px}
+.camera-control{min-width:92px;min-height:52px;border-radius:14px;background:#303030;color:#fff;font-size:16px;font-weight:800}
+.camera-countdown{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;color:white;font-size:clamp(110px,32vw,230px);font-weight:900;text-shadow:0 5px 24px rgba(0,0,0,.85);z-index:2}
+.camera-video-wrap{position:relative}
+.camera-shutter{width:76px;height:76px;flex:0 0 76px;border-radius:50%;background:#fff;border:7px solid #aaa}
+
+@media(max-width:500px){
+  .wrap{padding:20px}
+  .key{height:72px}
+  h1{font-size:29px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div id="checkScreen">
+
+<img id="dojoLogo" alt="도장 로고" style="display:none;max-width:120px;max-height:90px;object-fit:contain;margin:0 auto 12px">
+<div class="brand" id="dojoBrand">용인대 승리태권도</div>
+<h1>출석체크</h1>
+
+<div class="guide">
+출석번호 4자리를 입력해주세요
+</div>
+<div id="lastPhotoBox" class="last-photo" aria-live="polite">
+  <img id="lastPhotoImage" alt="방금 촬영한 출석사진">
+  <div id="lastPhotoCaption" class="last-photo-caption">방금 촬영한 사진</div>
+</div>
+
+<div class="pin-box">
+<div class="dot"></div>
+<div class="dot"></div>
+<div class="dot"></div>
+<div class="dot"></div>
+</div>
+
+<div class="keypad">
+
+<button class="key" onclick="press('1')">1</button>
+<button class="key" onclick="press('2')">2</button>
+<button class="key" onclick="press('3')">3</button>
+
+<button class="key" onclick="press('4')">4</button>
+<button class="key" onclick="press('5')">5</button>
+<button class="key" onclick="press('6')">6</button>
+
+<button class="key" onclick="press('7')">7</button>
+<button class="key" onclick="press('8')">8</button>
+<button class="key" onclick="press('9')">9</button>
+
+<button class="key delete" onclick="removeNumber()">←</button>
+<button class="key" onclick="press('0')">0</button>
+
+<button
+id="confirmBtn"
+class="key confirm"
+onclick="checkAttendance()">
+확인
+</button>
+
+</div>
+
+<div id="message" class="message"></div>
+
+</div>
+
+
+<!-- 출석 완료 -->
+
+<div id="successScreen" class="success-card">
+
+<div id="successIcon" class="check">✓</div>
+
+<div id="studentName" class="student-name"></div>
+
+<div id="completeText" class="complete-text">
+출석 완료!
+</div>
+
+<div id="checkTime" class="time"></div>
+
+
+<div class="photo-area">
+
+<div class="photo-guide">
+카메라가 열리면 3 · 2 · 1 후 자동 촬영됩니다.
+</div>
+
+<button
+id="cameraBtn"
+class="photo-button"
+onclick="openCamera()">
+📷 다시 카메라 열기
+</button>
+
+<input
+id="photoInput"
+type="file"
+accept="image/*"
+capture="user"
+onchange="photoSelected(event)"
+>
+
+<img
+id="preview"
+class="preview"
+alt="출석사진 미리보기"
+>
+
+<div id="photoActions" class="photo-actions">
+
+<button
+class="retake"
+onclick="openCamera()">
+다시 찍기
+</button>
+
+<button
+type="button"
+id="uploadBtn"
+class="upload"
+onclick="uploadPhoto()">
+사진 보내기
+</button>
+
+</div>
+
+<div id="photoMessage"></div>
+
+<button
+id="skipBtn"
+class="skip-button"
+onclick="finishAndReset()">
+사진 없이 완료
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div id="cameraModal" class="camera-modal">
+  <div class="camera-video-wrap">
+    <video id="cameraVideo" autoplay playsinline muted></video>
+    <div id="cameraCountdown" class="camera-countdown" aria-live="polite"></div>
+  </div>
+  <div class="camera-controls">
+    <button type="button" class="camera-control" onclick="closeCamera()">취소</button>
+    <button type="button" class="camera-shutter" aria-label="3초 후 사진 촬영" onclick="startCameraCountdown()"></button>
+    <button type="button" class="camera-control" onclick="switchCamera()">카메라 전환</button>
+  </div>
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://ixuxlblfkoccmwqxsjbw.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_lmwJJaHfZzE5hXnZnF49oA__F7JpDZ8";
+
+/* 관리자 페이지의 도장 기본 설정을 출석체크기에 반영 */
+async function loadDojoSettings(){
+  try{
+    const response=await fetch(SUPABASE_URL+"/rest/v1/rpc/get_dojo_settings",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY},
+      body:"{}",
+      cache:"no-store"
+    });
+    if(!response.ok)throw new Error("도장 설정 조회 실패");
+    const raw=await response.json();
+    const settings=Array.isArray(raw)?raw[0]:raw;
+    if(!settings || typeof settings!=="object")return;
+    const name=String(settings.dojo_name||"용인대 승리태권도").trim();
+    document.getElementById("dojoBrand").textContent=name;
+    document.title=name+" 출석체크";
+    const primary=/^#[0-9a-f]{6}$/i.test(settings.primary_color||"")?settings.primary_color:"#062b5c";
+    const txt=/^#[0-9a-f]{6}$/i.test(settings.text_color||"")?settings.text_color:"#152238";
+    document.documentElement.style.setProperty("--dojo-primary",primary);
+    document.documentElement.style.setProperty("--dojo-text",txt);
+    document.querySelector('meta[name="theme-color"]').setAttribute("content",primary);
+    const logo=document.getElementById("dojoLogo");
+    const url=String(settings.logo_url||"");
+    if(/^https:\/\//i.test(url)||/^data:image\/(?:png|jpeg|webp|gif);base64,/i.test(url)){
+      logo.src=url;
+      logo.style.display="block";
+      logo.onerror=()=>{logo.style.display="none";};
+    }else{logo.removeAttribute("src");logo.style.display="none";}
+  }catch(error){console.warn("도장 설정을 불러오지 못해 기본 표시를 사용합니다.",error);}
+}
+loadDojoSettings();
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadDojoSettings();});
+
+let pin="";
+let processing=false;
+
+let attendancePin="";
+let selectedPhoto=null;
+let cameraStream=null;
+let currentFacingMode="user";
+let photoUploading=false;
+let lastPhotoUrl=null;
+let lastPhotoHideTimer=null;
+let currentStudentName="";
+
+function rememberLastPhoto(file){
+  if(!file)return;
+  if(lastPhotoHideTimer)clearTimeout(lastPhotoHideTimer);
+  if(lastPhotoUrl)URL.revokeObjectURL(lastPhotoUrl);
+  lastPhotoUrl=URL.createObjectURL(file);
+  document.getElementById("lastPhotoImage").src=lastPhotoUrl;
+  document.getElementById("lastPhotoCaption").textContent=
+    (currentStudentName ? currentStudentName+" · " : "")+"방금 촬영한 사진";
+  document.getElementById("lastPhotoBox").style.display="block";
+  lastPhotoHideTimer=setTimeout(hideLastPhoto,30000);
+}
+function hideLastPhoto(){
+  document.getElementById("lastPhotoBox").style.display="none";
+  document.getElementById("lastPhotoImage").removeAttribute("src");
+  if(lastPhotoUrl){URL.revokeObjectURL(lastPhotoUrl);lastPhotoUrl=null;}
+  lastPhotoHideTimer=null;
+}
+
+let countdownTimer=null;
+let countdownToken=0;
+
+
+/* 숫자 입력 */
+
+function press(number){
+
+  if(processing)return;
+  if(pin.length>=4)return;
+
+  pin+=number;
+  updateDots();
+
+  if(pin.length===4){
+    document.getElementById("message").textContent=
+    "확인을 눌러주세요.";
+  }
+}
+
+
+function removeNumber(){
+
+  if(processing)return;
+
+  pin=pin.slice(0,-1);
+  updateDots();
+
+  document.getElementById("message").textContent="";
+}
+
+
+function updateDots(){
+
+  const dots=
+  document.querySelectorAll(".dot");
+
+  dots.forEach((dot,index)=>{
+
+    if(index<pin.length){
+      dot.classList.add("on");
+    }else{
+      dot.classList.remove("on");
+    }
+
+  });
+}
+
+
+/* 부모님 푸시 */
+
+async function sendParentPush(attendancePin, action="attendance"){
+
+  try{
+
+    const response=
+    await fetch(
+      SUPABASE_URL+"/functions/v1/send-push",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          pin:attendancePin,
+           action:action
+        })
+      }
+    );
+
+    const data=
+    await response.json();
+
+    console.log(
+      "부모님 푸시 알림 결과:",
+      data
+    );
+
+  }catch(error){
+
+    console.error(
+      "부모님 푸시 알림 오류:",
+      error
+    );
+
+  }
+}
+
+
+/* 출석 */
+
+async function checkAttendance(){
+
+  if(processing)return;
+
+  const message=
+  document.getElementById("message");
+
+  if(pin.length!==4){
+
+    message.className="message error";
+    message.textContent=
+    "출석번호 4자리를 입력해주세요.";
+
+    return;
+  }
+
+  processing=true;
+
+  document.getElementById(
+    "confirmBtn"
+  ).disabled=true;
+
+  message.className="message";
+  message.textContent="확인 중...";
+
+  try{
+
+    attendancePin=pin;
+
+    const response=
+    await fetch(
+      SUPABASE_URL+
+      "/rest/v1/rpc/check_attendance",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json",
+          "apikey":SUPABASE_KEY,
+          "Authorization":
+          "Bearer "+SUPABASE_KEY
+        },
+
+        body:JSON.stringify({
+          input_pin:attendancePin
+        })
+      }
+    );
+
+    if(!response.ok){
+      throw new Error("출석 서버 오류");
+    }
+
+    const result=
+    await response.json();
+
+    if(result.success){
+
+      if(result.action === "departure"){
+        sendParentPush(attendancePin, "departure");
+        showDeparture(result.name);
+      }else{
+        sendParentPush(attendancePin);
+        showSuccess(result.name);
+      }
+
+    }else{
+
+      message.className="message error";
+
+      if(result.already){
+
+        message.textContent=
+        result.message || (result.name + " 수련생은 이미 출석과 귀가를 완료했습니다.");
+
+      }else{
+
+        message.textContent=
+        result.message||
+        "출석번호를 확인해주세요.";
+
+      }
+
+      resetPin();
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    message.className="message error";
+
+    message.textContent=
+    "연결에 문제가 있습니다. 다시 시도해주세요.";
+
+    resetPin();
+
+  }finally{
+
+    processing=false;
+
+    document.getElementById(
+      "confirmBtn"
+    ).disabled=false;
+
+  }
+}
+
+
+/* 출석 성공 */
+
+function showSuccess(name){
+  currentStudentName=name;
+  document.getElementById("successIcon").textContent="✓";
+  document.getElementById("completeText").textContent="출석 완료!";
+  document.getElementById("successIcon").style.background="#08a64d";
+  document.querySelector("#successScreen .photo-area").style.display="block";
+
+  document.getElementById(
+    "checkScreen"
+  ).style.display="none";
+
+  document.getElementById(
+    "successScreen"
+  ).style.display="block";
+
+  document.getElementById(
+    "studentName"
+  ).textContent=
+  name+" 수련생";
+
+  document.getElementById(
+    "checkTime"
+  ).textContent=
+  new Date().toLocaleTimeString(
+    "ko-KR",
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+  clearPhoto();
+  // 출석이 완료되면 카메라를 자동으로 열고 3, 2, 1 후 촬영합니다.
+  openCamera();
+}
+
+
+/* 두 번째 입력: 귀가 완료. 사진 촬영은 하지 않습니다. */
+function showDeparture(name){
+  clearPhoto();
+  document.getElementById("checkScreen").style.display="none";
+  document.getElementById("successScreen").style.display="block";
+  document.getElementById("studentName").textContent=name+" 수련생";
+  document.getElementById("successIcon").textContent="⌂";
+  document.getElementById("successIcon").style.background="#1765bd";
+  document.getElementById("completeText").textContent="귀가 완료!";
+  document.getElementById("checkTime").textContent=new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"});
+  document.querySelector("#successScreen .photo-area").style.display="none";
+  setTimeout(()=>{
+    if(document.getElementById("successScreen").style.display==="block" &&
+       document.getElementById("completeText").textContent==="귀가 완료!"){
+      finishAndReset();
+    }
+  },2500);
+}
+
+/* 카메라 */
+
+async function openCamera(){
+
+  const photoMessage=document.getElementById("photoMessage");
+  photoMessage.textContent="셀카 카메라를 여는 중입니다...";
+
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      throw new Error("직접 카메라 실행 미지원");
+    }
+
+    closeCameraStreamOnly();
+    currentFacingMode="user";
+
+    cameraStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{exact:"user"}},
+      audio:false
+    });
+
+    const video=document.getElementById("cameraVideo");
+    video.style.transform="scaleX(-1)";
+    video.srcObject=cameraStream;
+
+    document.getElementById("cameraModal").style.display="flex";
+    await video.play();
+    photoMessage.textContent="";
+    startCameraCountdown();
+
+  }catch(error){
+    console.error("셀카 카메라 실행 오류:",error);
+
+    /* exact가 안 되는 기기는 user 우선으로 한 번 더 시도 */
+    try{
+      closeCameraStreamOnly();
+
+      cameraStream=await navigator.mediaDevices.getUserMedia({
+        video:{facingMode:"user"},
+        audio:false
+      });
+
+      currentFacingMode="user";
+
+      const video=document.getElementById("cameraVideo");
+      video.style.transform="scaleX(-1)";
+      video.srcObject=cameraStream;
+
+      document.getElementById("cameraModal").style.display="flex";
+      await video.play();
+      photoMessage.textContent="";
+      startCameraCountdown();
+
+    }catch(secondError){
+      console.error("셀카 우선 실행 오류:",secondError);
+      photoMessage.textContent="셀카 카메라를 직접 열지 못해 기본 카메라를 엽니다.";
+      document.getElementById("photoInput").click();
+    }
+  }
+}
+
+function cancelCameraCountdown(){
+  countdownToken++;
+  if(countdownTimer!==null){clearTimeout(countdownTimer);countdownTimer=null;}
+  const el=document.getElementById("cameraCountdown");
+  if(el){el.style.display="none";el.textContent="";}
+}
+
+function startCameraCountdown(){
+  const video=document.getElementById("cameraVideo");
+  if(!cameraStream)return;
+  if(!video.videoWidth || !video.videoHeight){
+    document.getElementById("photoMessage").textContent="카메라 준비 중입니다. 잠시 기다려주세요.";
+    video.addEventListener("loadeddata", ()=>{
+      if(cameraStream && document.getElementById("cameraModal").style.display==="flex") startCameraCountdown();
+    }, {once:true});
+    return;
+  }
+  cancelCameraCountdown();
+  const token=countdownToken;
+  const el=document.getElementById("cameraCountdown");
+  let remaining=3;
+  el.style.display="flex";
+  const tick=()=>{
+    if(token!==countdownToken || !cameraStream)return;
+    if(remaining>0){
+      el.textContent=String(remaining--);
+      countdownTimer=setTimeout(tick,1000);
+    }else{
+      // 촬영을 먼저 시작하고 카운트다운을 종료합니다.
+      // 동영상 프레임이 준비되지 않았다면 사용자에게 오류를 보여줍니다.
+      takeSelfie();
+    }
+  };
+  tick();
+}
+
+function closeCameraStreamOnly(){
+  if(cameraStream){
+    cameraStream.getTracks().forEach(track=>track.stop());
+    cameraStream=null;
+  }
+}
+
+function closeCamera(){
+  cancelCameraCountdown();
+  closeCameraStreamOnly();
+  const video=document.getElementById("cameraVideo");
+  video.srcObject=null;
+  document.getElementById("cameraModal").style.display="none";
+}
+
+async function switchCamera(){
+  cancelCameraCountdown();
+  try{
+    currentFacingMode=currentFacingMode==="user" ? "environment" : "user";
+    closeCameraStreamOnly();
+
+    cameraStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{exact:currentFacingMode}},
+      audio:false
+    });
+
+    const video=document.getElementById("cameraVideo");
+    video.style.transform=currentFacingMode==="user" ? "scaleX(-1)" : "none";
+    video.srcObject=cameraStream;
+    await video.play();
+    startCameraCountdown();
+
+  }catch(error){
+    console.error("카메라 전환 오류:",error);
+    document.getElementById("photoMessage").textContent="카메라 전환에 실패했습니다.";
+  }
+}
+
+async function takeSelfie(){
+
+  const video=document.getElementById("cameraVideo");
+
+  if(!video.videoWidth || !video.videoHeight){
+    cancelCameraCountdown();
+    document.getElementById("photoMessage").textContent="카메라 화면이 준비되지 않았습니다. 다시 찍기를 눌러주세요.";
+    return;
+  }
+
+  try{
+    const MAX_SIZE=1280;
+
+    let width=video.videoWidth;
+    let height=video.videoHeight;
+
+    if(width>MAX_SIZE || height>MAX_SIZE){
+      const ratio=Math.min(MAX_SIZE/width,MAX_SIZE/height);
+      width=Math.round(width*ratio);
+      height=Math.round(height*ratio);
+    }
+
+    const canvas=document.createElement("canvas");
+    canvas.width=width;
+    canvas.height=height;
+
+    const ctx=canvas.getContext("2d");
+
+    if(currentFacingMode==="user"){
+      ctx.translate(width,0);
+      ctx.scale(-1,1);
+    }
+
+    ctx.drawImage(video,0,0,width,height);
+
+    const blob=await new Promise(resolve=>
+      canvas.toBlob(resolve,"image/jpeg",0.82)
+    );
+
+    if(!blob)throw new Error("사진 변환 실패");
+
+    cancelCameraCountdown();
+    selectedPhoto=new File(
+      [blob],
+      "attendance.jpg",
+      {type:"image/jpeg"}
+    );
+
+    closeCamera();
+
+    const preview=document.getElementById("preview");
+
+    if(preview.src){
+      try{URL.revokeObjectURL(preview.src)}catch(e){}
+    }
+
+    preview.src=URL.createObjectURL(selectedPhoto);
+    preview.style.display="block";
+
+    document.getElementById("cameraBtn").style.display="none";
+    document.getElementById("photoActions").style.display="flex";
+
+    const sizeMB=(selectedPhoto.size/1024/1024).toFixed(2);
+
+    document.getElementById("photoMessage").textContent=
+      "사진 준비 완료 ("+sizeMB+"MB)";
+
+    /* 촬영이 끝나면 바로 자동 전송 */
+    setTimeout(()=>{
+      uploadPhoto();
+    },300);
+
+  }catch(error){
+    cancelCameraCountdown();
+    console.error("셀카 촬영 오류:",error);
+    document.getElementById("photoMessage").textContent=
+      "사진 촬영에 실패했습니다. 다시 시도해주세요.";
+  }
+}
+
+async function photoSelected(event){
+
+  const file =
+    event.target.files[0];
+
+  if(!file)return;
+
+
+  document.getElementById(
+    "photoMessage"
+  ).textContent =
+    "사진을 준비하고 있습니다...";
+
+
+  try{
+
+    /*
+     * 사진 불러오기
+     */
+
+    const imageUrl =
+      URL.createObjectURL(file);
+
+    const image =
+      new Image();
+
+
+    await new Promise(
+      (resolve,reject)=>{
+
+        image.onload =
+          resolve;
+
+        image.onerror =
+          reject;
+
+        image.src =
+          imageUrl;
+
+      }
+    );
+
+
+    /*
+     * 사진 크기 자동 축소
+     *
+     * 최대 1280px
+     */
+
+    const MAX_SIZE =
+      1280;
+
+
+    let width =
+      image.naturalWidth;
+
+    let height =
+      image.naturalHeight;
+
+
+    if(
+      width >
+      MAX_SIZE ||
+      height >
+      MAX_SIZE
+    ){
+
+      const ratio =
+        Math.min(
+          MAX_SIZE / width,
+          MAX_SIZE / height
+        );
+
+
+      width =
+        Math.round(
+          width * ratio
+        );
+
+
+      height =
+        Math.round(
+          height * ratio
+        );
+
+    }
+
+
+    /*
+     * Canvas로 사진 압축
+     */
+
+    const canvas =
+      document.createElement(
+        "canvas"
+      );
+
+
+    canvas.width =
+      width;
+
+    canvas.height =
+      height;
+
+
+    const ctx =
+      canvas.getContext(
+        "2d"
+      );
+
+
+    ctx.drawImage(
+      image,
+      0,
+      0,
+      width,
+      height
+    );
+
+
+    /*
+     * JPEG 82% 화질
+     */
+
+    const blob =
+      await new Promise(
+        resolve =>
+          canvas.toBlob(
+            resolve,
+            "image/jpeg",
+            0.82
+          )
+      );
+
+
+    URL.revokeObjectURL(
+      imageUrl
+    );
+
+
+    if(!blob){
+
+      throw new Error(
+        "사진 변환 실패"
+      );
+
+    }
+
+
+    /*
+     * 압축된 사진을
+     * 전송용 파일로 저장
+     */
+
+    selectedPhoto =
+      new File(
+        [blob],
+        "attendance.jpg",
+        {
+          type:
+            "image/jpeg"
+        }
+      );
+
+
+    /*
+     * 미리보기
+     */
+
+    const preview =
+      document.getElementById(
+        "preview"
+      );
+
+
+    if(preview.src){
+
+      try{
+
+        URL.revokeObjectURL(
+          preview.src
+        );
+
+      }catch(e){}
+
+    }
+
+
+    preview.src =
+      URL.createObjectURL(
+        selectedPhoto
+      );
+
+
+    preview.style.display =
+      "block";
+
+
+    document.getElementById(
+      "cameraBtn"
+    ).style.display =
+      "none";
+
+
+    document.getElementById(
+      "photoActions"
+    ).style.display =
+      "flex";
+
+
+    /*
+     * 실제 압축된 용량 표시
+     */
+
+    const sizeMB =
+      (
+        selectedPhoto.size /
+        1024 /
+        1024
+      ).toFixed(2);
+
+
+    document.getElementById(
+      "photoMessage"
+    ).textContent =
+      "사진 준비 완료 (" +
+      sizeMB +
+      "MB)";
+
+    /* 기본 카메라 방식도 준비가 끝나면 바로 자동 전송 */
+    setTimeout(()=>{
+      uploadPhoto();
+    },300);
+
+
+  }catch(error){
+
+    console.error(
+      error
+    );
+
+
+    selectedPhoto =
+      null;
+
+
+    document.getElementById(
+      "photoMessage"
+    ).textContent =
+      "사진을 처리하지 못했습니다. 다시 촬영해주세요.";
+
+  }
+
+}
+
+
+/* 사진 업로드 */
+
+async function uploadPhoto(){
+
+  if(photoUploading)return;
+
+  const photoMessage=
+    document.getElementById("photoMessage");
+
+  const button=
+    document.getElementById("uploadBtn");
+
+  if(!selectedPhoto){
+    photoMessage.textContent=
+      "❌ 전송할 사진이 없습니다. 다시 촬영해주세요.";
+    return;
+  }
+
+  if(!attendancePin || !/^\d{4}$/.test(attendancePin)){
+    photoMessage.textContent=
+      "❌ 출석번호 정보가 없습니다. 처음부터 다시 출석해주세요.";
+    return;
+  }
+
+  photoUploading=true;
+  button.disabled=true;
+  button.textContent="전송 중...";
+
+  photoMessage.textContent=
+    "사진을 보내고 있습니다...";
+
+  try{
+
+    const formData=
+      new FormData();
+
+    formData.append(
+      "pin",
+      attendancePin
+    );
+
+    formData.append(
+      "photo",
+      selectedPhoto,
+      "attendance.jpg"
+    );
+
+    const controller=
+      new AbortController();
+
+    const timeoutId=
+      setTimeout(
+        ()=>controller.abort(),
+        20000
+      );
+
+    let response;
+
+    try{
+      response=
+        await fetch(
+          SUPABASE_URL+
+          "/functions/v1/upload-attendance-photo",
+          {
+            method:"POST",
+            headers:{
+              "apikey":SUPABASE_KEY,
+              "Authorization":
+                "Bearer "+SUPABASE_KEY
+            },
+            body:formData,
+            signal:controller.signal
+          }
+        );
+    }finally{
+      clearTimeout(timeoutId);
+    }
+
+    const raw=
+      await response.text();
+
+    let data={};
+
+    if(raw){
+      try{
+        data=JSON.parse(raw);
+      }catch(e){
+        throw new Error(
+          "서버 응답 오류 ("+
+          response.status+
+          ")"
+        );
+      }
+    }
+
+    if(!response.ok || !data.success){
+      throw new Error(
+        data.message ||
+        "사진 저장 실패 ("+
+        response.status+
+        ")"
+      );
+    }
+
+    photoMessage.textContent=
+      "✅ 출석사진을 보냈습니다.";
+    rememberLastPhoto(selectedPhoto);
+
+    document.getElementById(
+      "photoActions"
+    ).style.display="none";
+
+    document.getElementById(
+      "skipBtn"
+    ).textContent="완료";
+
+    button.textContent="사진 보내기";
+
+    setTimeout(
+      finishAndReset,
+      1500
+    );
+
+  }catch(error){
+
+    console.error(
+      "사진 전송 오류:",
+      error
+    );
+
+    if(error && error.name==="AbortError"){
+      photoMessage.textContent=
+        "❌ 전송 시간이 초과되었습니다. 사진 보내기를 다시 눌러주세요.";
+    }else{
+      photoMessage.textContent=
+        "❌ "+
+        (
+          error?.message ||
+          "사진 전송에 실패했습니다."
+        );
+    }
+
+    button.disabled=false;
+    button.textContent="사진 보내기";
+    photoUploading=false;
+  }
+}
+
+
+/* 초기화 */
+
+function clearPhoto(){
+
+  closeCamera();
+
+  selectedPhoto=null;
+  photoUploading=false;
+
+  const uploadButton=
+    document.getElementById("uploadBtn");
+
+  if(uploadButton){
+    uploadButton.disabled=false;
+    uploadButton.textContent="사진 보내기";
+  }
+
+  const input=
+  document.getElementById("photoInput");
+
+  input.value="";
+
+  const preview=
+  document.getElementById("preview");
+
+  if(preview.src){
+    URL.revokeObjectURL(
+      preview.src
+    );
+  }
+
+  preview.removeAttribute("src");
+  preview.style.display="none";
+
+  document.getElementById(
+    "cameraBtn"
+  ).style.display="block";
+
+  document.getElementById(
+    "photoActions"
+  ).style.display="none";
+
+  document.getElementById(
+    "photoMessage"
+  ).textContent="";
+
+  document.getElementById(
+    "skipBtn"
+  ).textContent="사진 없이 완료";
+}
+
+
+function finishAndReset(){
+
+  clearPhoto();
+
+  attendancePin="";
+
+  document.getElementById(
+    "successScreen"
+  ).style.display="none";
+
+  document.getElementById(
+    "checkScreen"
+  ).style.display="block";
+
+  document.getElementById(
+    "message"
+  ).textContent="";
+
+  resetPin();
+}
+
+
+function resetPin(){
+
+  pin="";
+  updateDots();
+
+}
+
+</script>
+
+</body>
+</html>
