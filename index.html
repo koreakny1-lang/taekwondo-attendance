@@ -268,7 +268,7 @@ button{
 <div id="checkScreen">
 
 <img id="dojoLogo" alt="도장 로고" style="display:none;max-width:120px;max-height:90px;object-fit:contain;margin:0 auto 12px">
-<div class="brand" id="dojoBrand">용인대 승리태권도</div>
+<div class="brand" id="dojoBrand">가좌태권도</div>
 <h1>출석체크</h1>
 
 <div class="guide">
@@ -409,10 +409,10 @@ onclick="finishAndReset()">
 <script>
 
 const SUPABASE_URL =
-"https://ixuxlblfkoccmwqxsjbw.supabase.co";
+"https://fmwyjonioibewiowbaun.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_lmwJJaHfZzE5hXnZnF49oA__F7JpDZ8";
+"sb_publishable_alXwN2FL7k1unOSQ3BBJ-Q_4V2qwvFn";
 
 /* 관리자 페이지의 도장 기본 설정을 출석체크기에 반영 */
 async function loadDojoSettings(){
@@ -427,7 +427,7 @@ async function loadDojoSettings(){
     const raw=await response.json();
     const settings=Array.isArray(raw)?raw[0]:raw;
     if(!settings || typeof settings!=="object")return;
-    const name=String(settings.dojo_name||"용인대 승리태권도").trim();
+    const name=String(settings.dojo_name||"가좌태권도").trim();
     document.getElementById("dojoBrand").textContent=name;
     document.title=name+" 출석체크";
     const primary=/^#[0-9a-f]{6}$/i.test(settings.primary_color||"")?settings.primary_color:"#062b5c";
